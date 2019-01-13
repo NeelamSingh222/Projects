@@ -1,0 +1,26 @@
+import random
+
+while True:
+
+	s = input('Give your input from Rock , Paper and Scissor \n')
+	c=random.randint(1,3)
+	if c==1:
+		cs='Rock'
+	elif c==2:
+		cs='Paper'
+	else:
+		cs='Scissor'
+
+	print(f' you choose {s} and computer choose {cs} \n')
+
+	if (cs=='Rock' and s=='Scissor' ) or (cs=='Paper' and s=='Rock') or (cs=='Scissor' and s=='Paper'):
+		print('Sorry ! you loose the game TRY NEXT TIME\n')
+	elif cs==s:
+		print('Its a tie !!! \n')
+	else:
+		print('Yippee ! you win the game NICE PLAYED\n')
+
+	g=input('Do you want to play again ! if yes press Y else N \n')
+
+	if g=='N':
+		break 
