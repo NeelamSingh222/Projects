@@ -1,0 +1,22 @@
+import cv2
+import numpy as np
+import time
+#import matplotlib.pyplot as plt
+
+def main():
+    path='C:\\Users\\Admin\\Downloads\\Compressed\\standard_test_images\\standard_test_images'
+    p1=path+'\\mandril_color.tif'
+    p2=path+'\\lena_color_512.tif'
+    
+    img1=cv2.imread(p1,1)
+    img2=cv2.imread(p2,1)
+    
+    for i in np.linspace(0,1,20):
+        alpha=i
+        beta=1-i
+        add=cv2.addWeighted(img1,alpha,img2,beta,0)
+        cv2.imshow('transitioning',add)
+        time.sleep(0.1)#sec
+        if cv2.waitKey(1)==27:
+            break
+    cv2.destroyAllWindows()
