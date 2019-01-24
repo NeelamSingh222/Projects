@@ -1,0 +1,33 @@
+import cv2
+
+#import matplotlib.pyplot as plt
+def emptyfun():
+    pass
+
+def main():
+    path='C:\\Users\\Admin\\Downloads\\Compressed\\standard_test_images\\standard_test_images'
+    p1=path+'\\mandril_color.tif'
+    p2=path+'\\lena_color_512.tif'
+    
+    img1=cv2.imread(p1,1)
+    img2=cv2.imread(p2,1)
+    
+
+    wn='Transition Demo'
+    cv2.namedWindow(wn)
+    cv2.createTrackbar('alpha',wn,0,1000,emptyfun)
+    
+    while True:
+
+        if cv2.waitKey(1)==27:
+            break
+        alpha=cv2.getTrackbarPos('alpha',wn)/1000
+        beta=1-alpha
+        output=cv2.addWeighted(img1,alpha,img2,beta,0)
+        cv2.imshow(wn,output)
+
+    cv2.destroyAllWindows()
+ 
+    
+if __name__ == "__main__":
+    main()
