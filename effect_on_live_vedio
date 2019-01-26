@@ -1,0 +1,38 @@
+def main():
+    nw='live vedio feed'
+    cv2.namedWindow(nw)
+    cap=cv2.VideoCapture(0)
+    if cap.isOpened():
+        ret,frame=cap.read()
+    else:
+        ret=False
+
+    rows,coloumns,channels=frame.shape
+    angle=360
+    scale=0.1
+    z=False
+    while True:
+        if angle==0:
+            angle=360 
+        if z==False:
+            scale+=0.1
+        if scale>=2:
+            z=True
+        if scale<=0.1:
+            z=False
+        if  z==True:
+            scale-=0.1
+        ret,frame=cap.read()
+        T=cv2.getRotationMatrix2D((coloumns/2,rows/2),angle,scale)
+        output=cv2.warpAffine(frame,T,(coloumns,rows))
+        angle-=1
+        cv2.imshow(nw,output)
+        time.sleep(0.0001)
+        if cv2.waitKey(1)==27:
+            break
+    cv2.destroyAllWindows()
+    cap.release()
+ 
+    
+if __name__ == "__main__":
+    main()
