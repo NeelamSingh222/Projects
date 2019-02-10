@@ -1,0 +1,56 @@
+import pygame
+
+pygame.init()
+sc=pygame.display.set_mode((267,210))
+r=(255,0,0)
+myfont=pygame.font.SysFont('Comic Sons ',30)
+ts=myfont.render('Spot 4 Differences',True,(255,255,255))
+img=pygame.image.load('C:\\Users\\Admin\\Desktop\\images.jpg')
+clock=pygame.time.Clock()
+f=0
+ok_sound=pygame.mixer.Sound('E:\\idm downloads\\NFF-magic-rise.wav')
+lose=pygame.mixer.Sound('E:\\idm downloads\\NFF-zing.wav')
+countdown_height=175
+rectangle=[[162,84,15,15],[229,147,15,15],[168,19,15,15],[232,60,15,15]]
+found=[]
+catch=0
+while True:
+    catch=0
+    f+=1
+    sc.fill((255,255,255))
+    sc.blit(img,(0,0))
+    for event in pygame.event.get():
+        if event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_p:
+                pygame.quit()
+                exit(0)
+        elif event.type==pygame.MOUSEBUTTONDOWN:
+            m=pygame.mouse.get_pos()
+
+            for i,r in enumerate(rectangle):
+                if m[0]>r[0] and m[0]<(r[0]+r[2]) and m[1]>r[1] and m[1]<(r[1]+r[3]):
+                    print('got it')
+                    found.append(i)
+                    pygame.mixer.Sound.play(ok_sound)
+                else:
+                    catch+=1
+                    
+    if catch==4:
+        print('you missed it ')
+        pygame.mixer.Sound.play(lose)
+        f+=5
+    for fl in found:
+        rect=rectangle[fl]
+        pygame.draw.rect(sc,(0,0,0),rect,2)
+
+
+    #code to display label in black color with white text
+    pygame.draw.rect(sc,(0,0,0),(0,175,267,50))
+    sc.blit(ts,(40,180))
+    #code for drawing count down bar
+    pygame.draw.rect(sc,(0,0,0),(129,0,8,175))
+    pygame.draw.rect(sc,(255,0,0),(129,0,6,countdown_height-f))
+    
+
+    clock.tick(5)
+    pygame.display.update()
