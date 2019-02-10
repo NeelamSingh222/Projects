@@ -1,0 +1,31 @@
+import pygame
+
+pygame.init()
+sc=pygame.display.set_mode((267,210))
+r=(255,0,0)
+myfont=pygame.font.SysFont('Comic Sons ',30)
+ts=myfont.render('Spot 4 Differences',True,(255,255,255))
+img=pygame.image.load('C:\\Users\\Admin\\Desktop\\images.jpg')
+clock=pygame.time.Clock()
+f=0
+while True:
+    f+=1
+    sec=f//15
+    sc.fill((255,255,255))
+    sc.blit(img,(0,0))
+    for event in pygame.event.get():
+        if event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_p:
+                pygame.quit()
+                exit(0)
+    pygame.draw.rect(sc,(0,0,0),(0,175,267,50))
+    sc.blit(ts,(40,180))
+    time_label=myfont.render(str(sec),True,(255,0,0))
+    sc.blit(time_label,(136,0))
+    pygame.draw.circle(sc,r,(168,90),8,2)
+    pygame.draw.circle(sc,r,(235,153),8,2)
+    pygame.draw.circle(sc,r,(175,26),8,2)
+    pygame.draw.circle(sc,r,(239,67),8,2)
+
+    clock.tick(5)
+    pygame.display.update()
