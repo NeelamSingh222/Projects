@@ -1,0 +1,123 @@
+import pygame
+
+pygame.init()
+sc=pygame.display.set_mode((267,210))
+r=(255,0,0)
+
+myfont=pygame.font.SysFont('Comic Sons ',30)
+titlefont=pygame.font.SysFont('Comic Sons ',40)
+gy=pygame.font.SysFont('Comic Sons ',20)
+gl=pygame.font.SysFont('Comic Sons ',50)
+ts=myfont.render('Spot 4 Differences',True,(255,255,255))
+
+img=pygame.image.load('C:\\Users\\Admin\\Desktop\\images.jpg')
+clock=pygame.time.Clock()
+f=0
+ok_sound=pygame.mixer.Sound('E:\\idm downloads\\NFF-magic-rise.wav')
+lose=pygame.mixer.Sound('E:\\idm downloads\\NFF-zing.wav')
+wonl=pygame.mixer.Sound('E:\\idm downloads\\NFF-magic-exploding.wav')
+
+countdown_height=175
+rectangle=[[162,84,15,15],[229,147,15,15],[168,19,15,15],[232,60,15,15]]
+found=[]
+catch=0
+menu=True
+
+while True:
+    while menu:
+        sc.fill((0,0,0))
+        p1=titlefont.render('Spot 4 Differences',True,(255,0,0))
+        p2=gy.render('Time-60 seconds',True,(255,255,255))
+        p3=gy.render('Press V to enter',True,(255,255,255))
+        p4=gy.render('Press P to exit',True,(255,255,255))
+
+        sc.blit(p1,(10,10))
+        sc.blit(p2,(10,80))
+        sc.blit(p3,(10,110))
+        sc.blit(p4,(10,140))
+
+        for event in pygame.event.get():
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_p:
+                    pygame.quit()
+                    exit(0)
+                elif event.key==pygame.K_v:                
+                    menu=False
+        clock.tick(30)
+        pygame.display.update()
+
+    catch=0
+    f+=1
+    sc.fill((255,255,255))
+    sc.blit(img,(0,0))
+    for event in pygame.event.get():
+        if event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_p:
+                pygame.quit()
+                exit(0)
+        elif event.type==pygame.MOUSEBUTTONDOWN:
+            m=pygame.mouse.get_pos()
+
+            for i,r in enumerate(rectangle):
+                if m[0]>r[0] and m[0]<(r[0]+r[2]) and m[1]>r[1] and m[1]<(r[1]+r[3]):
+                    print('got it')
+                    found.append(i)
+                    pygame.mixer.Sound.play(ok_sound)
+                else:
+                    catch+=1
+                    
+    if catch==4:
+        print('you missed it ')
+        pygame.mixer.Sound.play(lose)
+        f+=10
+    for fl in found:
+        rect=rectangle[fl]
+        pygame.draw.rect(sc,(0,0,0),rect,2)
+    
+    # code to display another window if you loose 
+    if countdown_height-f<=0:
+        game_over=True
+        while game_over:
+            print(countdown_height-f)
+            sc.fill((0,0,0))
+            z1=gl.render('GAME OVER:-(',True,(255,0,0))
+            z2=gy.render('press P to exit',True,(255,255,255))
+            sc.blit(z1,(20,70))
+            sc.blit(z2,(20,100))
+            pygame.mixer.Sound.play(wonl)
+            for event in pygame.event.get():
+                if event.type==pygame.KEYDOWN:
+                    if event.key==pygame.K_p:
+                        pygame.quit()
+                        exit(0)
+            clock.tick(30)
+            pygame.display.update()
+
+    #code if you win the game 
+    if len(found)==4 and countdown_height-f>0:
+        won=True
+        while won:
+            sc.fill((0,0,0))
+            k1=gl.render('CONGO:-)',True,(255,255,0))
+            k2=gy.render('press P to exit',True,(255,255,255))
+            sc.blit(k1,(20,70))
+            sc.blit(k2,(20,100))
+            pygame.mixer.Sound.play(wonl)
+            for event in pygame.event.get():
+                if event.type==pygame.KEYDOWN:
+                    if event.key==pygame.K_p:
+                        pygame.quit()
+                        exit(0)
+            clock.tick(30)
+            pygame.display.update()
+
+    #code to display label in black color with white text
+    pygame.draw.rect(sc,(0,0,0),(0,175,267,50))
+    sc.blit(ts,(40,180))
+    #code for drawing count down bar
+    pygame.draw.rect(sc,(0,0,0),(129,0,8,175))
+    pygame.draw.rect(sc,(255,0,0),(129,0,6,countdown_height-f))
+    
+
+    clock.tick(5)
+    pygame.display.update()
