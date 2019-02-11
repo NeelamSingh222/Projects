@@ -1,0 +1,91 @@
+import pygame
+import random
+
+pygame.init()
+d_w=800                                    #display width of screen
+d_h=600                                    #display height of screen
+sc=pygame.display.set_mode((d_w,d_h))      #dispalying screen of d_w width and d_w height                                  
+clock=pygame.time.Clock()                  #creting clock to control FPS
+font=pygame.font.SysFont(None,20)          #describing font of given size
+b_s=10                                     #block size by which snake will move
+FPS=30 
+                                    #frame per second
+def message_to_screen(msg,color):
+    screen_text=font.render(msg,True,color)
+    sc.blit(screen_text,[d_w//2,d_h//2])         #adding text in middle of screen
+
+def snake(x,y,b_s,l_y):
+    pygame.draw.rect(sc,(0,255,0),[x,y,b_s,l_y])             #displaying snake
+    l_y+=10
+
+def gameloop(): 
+    gameover=False                             #gives a choice to play again
+    gameExit=False                             #variable controoling main loop of game
+    x,y=d_w//2,d_h//2                          #setting pos of snake in middle of screen 
+    x_change,y_change=0,0                      #changes to be done in x and y coordinates of snake position
+    appleX=random.randrange(0,d_w-b_s)         #random x coordinate for apple
+    appleX=round(appleX/10.0)*10.0
+    appleY=random.randrange(0,d_h-b_s)         #random y coordinates for apple
+    appleY=round(appleY/10.0)*10.0
+    while not gameExit:
+
+        while gameover == True:
+            sc.fill((0,0,0))
+            message_to_screen("Game over, press C to play again or Q to quit", (255,255,255))
+            pygame.display.update()
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        gameexit = True
+                        gameover = False
+                        pygame.quit()
+                        quit()
+                    if event.key == pygame.K_c:
+                        gameloop()
+
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_LEFT:
+                    x_change-=b_s
+                    y_change=0                 #to stop diagonal movement of snake 
+                elif event.key==pygame.K_RIGHT:
+                    x_change=b_s
+                    y_change=0
+                elif event.key==pygame.K_UP:
+                    y_change=-b_s
+                    x_change=0
+                elif event.key==pygame.K_DOWN:
+                    y_change=+b_s
+                    x_change=0  
+            if event.type==pygame.KEYUP:
+                if event.key==pygame.K_LEFT or event.key==pygame.K_RIGHT or event.key==pygame.K_UP or event.key==pygame.K_DOWN:
+                    x_change=0
+                    y_change=0
+
+        if x>=d_w or x<0 or y>=d_h or y<0:      #imposing constraint for snake to remain on screen   
+            gameover=True
+
+        x+=x_change     #updating x coordinate
+        y+=y_change     #updating y coordinate
+        l_y=b_s
+        sc.fill((0,0,0))
+        if x==appleX and y==appleY :
+            appleX=random.randrange(0,d_w-b_s) 
+            appleX=round(appleX/10.0)*10.0       
+            appleY=random.randrange(0,d_h-b_s)
+            appleY=round(appleY/10.0)*10.0        
+        pygame.draw.rect(sc,(255,0,0),[appleX,appleY,b_s,b_s])     #displaying apple on screen     
+        snake(x,y,b_s,l_y)
+
+        pygame.display.update()
+        clock.tick(FPS)
+
+    sc.fill((0,0,187))
+    pygame.quit()
+    quit()
+
+gameloop()
