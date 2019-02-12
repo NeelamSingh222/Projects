@@ -1,0 +1,108 @@
+import pygame
+import random
+
+pygame.init()
+d_w=800                                    #display width of screen
+d_h=600                                    #display height of screen
+sc=pygame.display.set_mode((d_w,d_h))      #dispalying screen of d_w width and d_w height                                  
+clock=pygame.time.Clock()                  #creting clock to control FPS
+font=pygame.font.SysFont(None,40)          #describing font of given size
+b_s=22                                     #block size by which snake will move
+FPS=30                                     #frame per second 
+img=pygame.image.load('C:\\Users\\Admin\\Desktop\\snake.jpg')  #loading image
+direction='right'
+
+def message_to_screen(msg,color):
+    screen_text=font.render(msg,True,color)
+    sc.blit(screen_text,[110,d_h//2])         #adding text in middle of screen
+
+def snake(b_s, snakelist):
+    sc.blit(img,(snakelist[-1][0],snakelist[-1][1]))
+    for XnY in snakelist[:-1]:
+        pygame.draw.rect(sc,(0,155,0), [XnY[0],XnY[1],b_s,b_s])
+
+
+def gameloop(): 
+    gameover=False                             #gives a choice to play again
+    gameExit=False                             #variable controoling main loop of game
+    x,y=d_w//2,d_h//2                          #setting pos of snake in middle of screen 
+    x_change,y_change=10,0                      #changes to be done in x and y coordinates of snake position
+    appleX=random.randrange(0,d_w-b_s)         #random x coordinate for apple
+    appleY=random.randrange(0,d_h-b_s)         #random y coordinates for apple
+
+    snakelist=[]                               #creating empty snakelist 
+    snakelength=1
+    while not gameExit:
+
+        while gameover == True:
+            sc.fill((0,0,0))
+            message_to_screen("Game over, press C to play again or Q to quit", (255,255,255))
+            pygame.display.update()
+
+            for event in pygame.event.get():       #direct exit from the game
+                if event.type==pygame.QUIT:
+                    pygame.quit()
+                    quit()            
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        gameexit = True
+                        gameover = False
+                    if event.key == pygame.K_c:     #code for replay of game
+                        gameloop()
+
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_LEFT:
+                    x_change-=b_s
+                    y_change=0                 #to stop diagonal movement of snake 
+                elif event.key==pygame.K_RIGHT:
+                    x_change=b_s
+                    y_change=0
+                elif event.key==pygame.K_UP:
+                    y_change=-b_s
+                    x_change=0
+                elif event.key==pygame.K_DOWN:
+                    y_change=+b_s
+                    x_change=0  
+            if event.type==pygame.KEYUP:
+                if event.key==pygame.K_LEFT or event.key==pygame.K_RIGHT or event.key==pygame.K_UP or event.key==pygame.K_DOWN:
+                    x_change=0
+                    y_change=0
+
+        if x>=d_w or x<0 or y>=d_h or y<0:      #imposing constraint for snake to remain on screen   
+            gameover=True
+
+        x+=x_change     #updating x coordinate
+        y+=y_change     #updating y coordinate
+        sc.fill((0,0,0)) 
+
+        snakethickness=22
+        pygame.draw.rect(sc,(255,0,0),[appleX,appleY,snakethickness,snakethickness])     #displaying apple on screen
+        snakehead=[]
+        snakehead.append(x)
+        snakehead.append(y)
+        snakelist.append(snakehead)
+
+        if len(snakelist)>snakelength:                             #to keep length of snake constant 
+            del snakelist[0]
+
+
+        snake(b_s,snakelist)
+        pygame.display.update()
+
+        if(x > appleX and x< appleX+snakethickness or x+b_s >appleX and x+b_s >appleX) and (y> appleY and y< appleY+snakethickness or y+b_s >appleY and y+b_s >appleY):
+            appleX = round(random.randrange(0, d_w-b_s))              #10.0)*10.0
+            appleY = round(random.randrange(0, d_h-b_s))             #/10.0)*10.0
+            snakelength += 1      
+
+            
+        
+        clock.tick(FPS)
+
+    pygame.quit()
+    quit()
+
+gameloop()
