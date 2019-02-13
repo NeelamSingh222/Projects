@@ -1,0 +1,176 @@
+import pygame
+import random
+
+pygame.init()
+d_w=800                                                  #display width of screen
+d_h=600                                                  #display height of screen
+sc=pygame.display.set_mode((d_w,d_h))                    #dispalying screen of d_w width and d_w height                                  
+clock=pygame.time.Clock()                                #creting clock to control FPS
+Smallfont=pygame.font.SysFont('comicsansms',25)          #describing font of small size
+Mediumfont=pygame.font.SysFont('comicsansms',35)         #describing font of medium size
+Largefont=pygame.font.SysFont('comicsansms',80)          #describing font of large size
+b_s=22                                                   #block size by which snake will move
+FPS=15                                                   #frame per second 
+img=pygame.image.load('C:\\Users\\Admin\\Desktop\\snake.jpg')       #loading snake image
+direction='right'
+appleimg=pygame.image.load('C:\\Users\\Admin\\Desktop\\apple.png')  #loading apple image
+icon=pygame.image.load('C:\\Users\\Admin\\Desktop\\apple.png')
+pygame.display.set_icon(icon)
+ok_sound=pygame.mixer.Sound('E:\\idm downloads\\NFF-zing.wav')
+
+def game_intro():
+    intro=True
+    while intro:
+        sc.fill((0,0,0))
+        message_to_screen("WELCOME",(255,255,0),-100,Largefont)
+        message_to_screen("Enter S to start the game",(255,255,255),0,Mediumfont)
+        message_to_screen("Enter Q to quit the game",(255,255,255),60,Mediumfont) 
+        message_to_screen("Enter P to pause the game",(255,255,255),120,Mediumfont)                
+        for event in pygame.event.get():       #direct exit from the game
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_s:
+                    intro=False
+                elif event.key==pygame.K_q:
+                    pygame.quit()
+                    quit()        
+        pygame.display.update()
+        clock.tick(4)
+
+
+def message_to_screen(msg,color,shift,size):
+    screen_text=size.render(msg,True,color)
+    sc.blit(screen_text,[110,d_h//2+shift])               #adding text in middle of screen
+
+def Score(score):
+    text=Smallfont.render("Score: "+str(score),True,(255,250,10))
+    sc.blit(text,[10,10])
+
+def pause():
+    paused=True
+    while paused:
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_p:
+                    paused=False
+                elif event.key==pygame.K_q:
+                    pygame.quit()
+                    quit()
+        sc.fill((255,255,255))
+        message_to_screen("PAUSED GAME",(255,0,0),-100,Largefont)
+        message_to_screen("press P to continue and q to quit",(0,0,0),0,Mediumfont)
+        pygame.display.update()
+    clock.tick(5)
+
+def snake(b_s, snakelist):
+    if direction=="right":
+        head=pygame.transform.rotate(img,270)
+    if direction=="left":
+        head=pygame.transform.rotate(img,90)
+    if direction=="up":
+        head=pygame.transform.rotate(img,0)
+    if direction=="down":
+        head=pygame.transform.rotate(img,180)                
+    sc.blit(head,(snakelist[-1][0],snakelist[-1][1]))
+    for XnY in snakelist[:-1]:
+        pygame.draw.rect(sc,(0,155,0), [XnY[0],XnY[1],b_s,b_s])
+
+game_intro()
+def gameloop():
+    global direction 
+    gameover=False                                        #gives a choice to play again
+    direction="right"
+    gameExit=False                             #variable controoling main loop of game
+    x,y=d_w//2,d_h//2                          #setting pos of snake in middle of screen 
+    x_change,y_change=10,0                     #changes to be done in x and y coordinates of snake position
+    appleX=random.randrange(0,d_w-b_s)         #random x coordinate for apple
+    appleY=random.randrange(0,d_h-b_s)         #random y coordinates for apple
+
+    snakelist=[]                               #creating empty snakelist 
+    snakelength=1
+    score=0
+    
+    while not gameExit:
+
+        while gameover == True:
+            sc.fill((0,0,0))
+            message_to_screen("Game over", (255,0,0),-150,Largefont)
+            message_to_screen("Your Score "+str(score), (255,255,0),-80,Largefont)
+            message_to_screen('press C to play again or Q to quit',(255,255,255),20,Mediumfont)
+            pygame.display.update()
+
+            for event in pygame.event.get():       #direct exit from the game
+                if event.type==pygame.QUIT:
+                    pygame.quit()
+                    quit()            
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        gameexit = True
+                        gameover = False
+                        pygame.quit()
+                        quit()
+                    if event.key == pygame.K_c:     #code for replay of game
+                        gameloop()
+
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_LEFT:
+                    direction='left'
+                    x_change=-b_s
+                    y_change=0                 #to stop diagonal movement of snake 
+                elif event.key==pygame.K_RIGHT:
+                    direction='right'
+                    x_change=b_s
+                    y_change=0
+                elif event.key==pygame.K_UP:
+                    direction='up'
+                    y_change=-b_s
+                    x_change=0
+                elif event.key==pygame.K_DOWN:
+                    direction='down'
+                    y_change=+b_s
+                    x_change=0 
+                elif event.key==pygame.K_p:
+                    pause() 
+
+        if x>=d_w or x<0 or y>=d_h or y<0:      #imposing constraint for snake to remain on screen   
+            gameover=True
+
+        x+=x_change     #updating x coordinate
+        y+=y_change     #updating y coordinate
+        sc.fill((0,0,0)) 
+
+        Score(score)
+        snakethickness=22
+        applethickness=30
+        sc.blit(appleimg,(appleX,appleY))    #displaying apple on screen
+        snakehead=[]
+        snakehead.append(x)
+        snakehead.append(y)
+        snakelist.append(snakehead)
+
+        if len(snakelist)>snakelength:                             #to keep length of snake constant 
+            del snakelist[0]
+
+
+        snake(b_s,snakelist)
+        pygame.display.update()
+
+        if(x > appleX and x< appleX+applethickness or x+b_s >appleX and x+b_s < appleX+applethickness) and (y> appleY and y< appleY+applethickness or y+b_s >appleY and y+b_s < appleY+applethickness):
+            appleX = round(random.randrange(0+applethickness, d_w-applethickness))              #10.0)*10.0
+            appleY = round(random.randrange(0+applethickness, d_h-applethickness))             #/10.0)*10.0
+            pygame.mixer.Sound.play(ok_sound)
+            snakelength += 1
+            score+=10     
+        
+        clock.tick(FPS)
+
+    pygame.quit()
+    quit()
+
+gameloop()
