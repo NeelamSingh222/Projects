@@ -10,13 +10,14 @@ Smallfont=pygame.font.SysFont('comicsansms',25)          #describing font of sma
 Mediumfont=pygame.font.SysFont('comicsansms',35)         #describing font of medium size
 Largefont=pygame.font.SysFont('comicsansms',80)          #describing font of large size
 b_s=22                                                   #block size by which snake will move
-FPS=15                                                   #frame per second 
+FPS=10                                                   #frame per second 
 img=pygame.image.load('C:\\Users\\Admin\\Desktop\\snake.jpg')       #loading snake image
 direction='right'
 appleimg=pygame.image.load('C:\\Users\\Admin\\Desktop\\apple.png')  #loading apple image
 icon=pygame.image.load('C:\\Users\\Admin\\Desktop\\apple.png')
 pygame.display.set_icon(icon)
 ok_sound=pygame.mixer.Sound('E:\\idm downloads\\NFF-zing.wav')
+pygame.display.set_caption('Slither')
 
 def game_intro():
     intro=True
@@ -47,6 +48,8 @@ def Score(score):
 
 def pause():
     paused=True
+    message_to_screen("PAUSED GAME",(255,0,0),-100,Largefont)
+    message_to_screen("press P to continue and q to quit",(0,0,0),0,Mediumfont)    
     while paused:
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
@@ -58,9 +61,7 @@ def pause():
                 elif event.key==pygame.K_q:
                     pygame.quit()
                     quit()
-        sc.fill((255,255,255))
-        message_to_screen("PAUSED GAME",(255,0,0),-100,Largefont)
-        message_to_screen("press P to continue and q to quit",(0,0,0),0,Mediumfont)
+
         pygame.display.update()
     clock.tick(5)
 
@@ -157,6 +158,9 @@ def gameloop():
         if len(snakelist)>snakelength:                             #to keep length of snake constant 
             del snakelist[0]
 
+        for i in snakelist[:-1]:
+            if i == snakehead:
+                gameover=True
 
         snake(b_s,snakelist)
         pygame.display.update()
